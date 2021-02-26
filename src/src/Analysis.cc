@@ -112,6 +112,11 @@ void Analysis::save_in_output_buffer(
         const G4double &lon, const G4double &alt, const int event_nb) {
 
     //
+
+    if (PDG_NB!=22) {
+        return; // skip if not photon
+    }
+
     double alt2 = alt / 1000.0; // m to km
 
     bool record_or_not = true;

@@ -2,46 +2,70 @@ clear all
 close all
 clc
 
-E0_list = [7.3 7.6 7.9];
-ALPHA_list = [1 1.2 1.2];
+set(groot,'defaultfigureposition',[400 250 900 600])
+set(0,'DefaultFigureWindowStyle','normal')
 
-! cat /Home/siv29/dsa030/Desktop/GEANT4/CHECK_TGF_SPECTRUM_AFTER_PROPAGATION_ANDERS_PAPER/build/output_ascii/* > fused.txt
+MIN_ENERGY = 300; %keV
+
+! cat ./build/output_ascii/* > fused.txt
 
 yy=importdata('fused.txt');
 
 energies = yy(:,6);
-E0 = yy(:,13);
-ALPHA = yy(:,14);
+source_alts = yy(:,2);
+event_nbs = yy(:,4);
 
-bins=logspace(log10(50),log10(40000),128);
+ALT_LIST = unique([source_alts; 6; 7; 8]);
 
-for ii=1:length(E0_list)
+% vals = linspace(0,1,64);
+% bins = quantile(energies,vals);
+bins = logspace(log10(50),log10(40000),32);
+bins = sort([bins 511-2 511+2]);
+
+bins=unique(bins);
+centers = (bins(1:end-1)+bins(2:end))/2.0;
+
+for ii=1:length(ALT_LIST)
     
-    tk = E0 == E0_list(ii) & ALPHA == ALPHA_list(ii);
+    tk = source_alts == ALT_LIST(ii) & energies > MIN_ENERGY;
     
     e_kept = energies(tk);
+
+    if ~isempty( max(event_nbs(tk)))
+       nb_sampled(ii) = max(event_nbs(tk));
+    else
+       nb_sampled(ii) = 0; 
+    end
     
-    [N,bins] = histcounts(e_kept,bins);
-    spec{ii} = N./diff(bins);
-    spec{ii} = spec{ii}./max(spec{ii});
-    
-    histogram('BinEdges',bins,'BinCounts',spec{ii},'DisplayStyle','stairs',...
-        'displayname',['E0: ' num2str(E0_list(ii)) ' MeV; ' 'ALPHA: ' num2str(ALPHA_list(ii))])
-    hold on
-    
-    set(gca, 'XScale', 'log')
-    set(gca, 'YScale', 'log')
-    xlabel('energy (keV)')
-    ylabel('n/de spectrum (a.u.)')
+    nb_recorded(ii) = sum(tk);
+
+    transmitance(ii) = nb_recorded(ii)/nb_sampled(ii);
     
 end
 
-legend('show')
+transmitance(isnan(transmitance))=0;
+
+plot(ALT_LIST,transmitance)
 
 grid on
 
-set(gca,'xlim',[45 41000])
+title({'TGF photon transmitance (between 0 and 1)', 'as function of photon source altitude.','assuming photon spectrum 1/E*exp(-E/7.3MeV) and Gaussian beaming (sigma 10 deg)','recorded at 500 km altitude, lat = 22deg, long = -77deg','Source photon min energy = 500 keV','Record photon min energy = 300 keV','beaming upwards gaussian sigma 10 deg'})
 
-title('TGF at 15 km altitude, record at 400 km altitude, angular dist. Gaussian with sigma = 20')
+xlabel('source altitude (km)')
+ylabel('transmitance (between 0 and 1)')
 
-saveas(gcf,'result_compa_usual_dwyer_geant4.png')
+saveas(gcf,'result_transmitance.png')
+
+% text(10,0.015,num2str(transmitance))
+%     [N,bins] = histcounts(e_kept,bins);
+%     spec{ii} = N./diff(bins);
+%     spec{ii} = spec{ii}./trapz(centers,spec{ii});
+%     
+%     histogram('BinEdges',bins,'BinCounts',spec{ii},'DisplayStyle','stairs','linewidth',2,...
+%         'displayname',['E0: ' num2str(ALT_LIST(ii)) ' MeV; ' 'ALPHA: ' num2str(ALPHA_list(ii))])
+%     hold on
+%     
+%     set(gca, 'XScale', 'log')
+%     set(gca, 'YScale', 'log')
+%     xlabel('energy (keV)')
+%     ylabel('n/de spectrum (a.u.)')

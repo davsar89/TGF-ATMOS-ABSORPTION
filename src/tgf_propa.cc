@@ -86,44 +86,43 @@ int main(int argc, char **argv)
     G4String number_st;
     G4String Mode = "run";
 
-    if (argc >= 3)
+    if (argc >= 2)
     {
         number_st = argv[1];
-        settings.ALPHA = std::stod(argv[2]);
-        settings.E0 = std::stod(argv[3]);
+        settings.SOURCE_ALT = std::stod(argv[2]);
     }
     else
     {
         // default values can be seen/changed in src/include/Settings.hh
         Mode = "run";
-        number_st = "10000000";
+        number_st = "50000000";
     }
 
     ///
 #ifdef G4MULTITHREADED
-    int nb_cores = G4Threading::G4GetNumberOfCores();
-    G4cout << "Number of cores: " << nb_cores << G4endl;
+    // int nb_cores = G4Threading::G4GetNumberOfCores();
+    // G4cout << "Number of cores: " << nb_cores << G4endl;
+    // if (nb_cores == 8)
+    // {
+    //     nb_cores = 4;
+    //     G4cout << "Number of cores to be used: " << nb_cores << G4endl;
+    // }
+
+    // if (nb_cores == 64)
+    // {
+    //     nb_cores = 32;
+    //     G4cout << "Number of cores to be used: " << nb_cores << G4endl;
+    // }
+
+    // if (nb_cores == 12)
+    // {
+    //     nb_cores = 4;
+    //     G4cout << "Number of cores to be used: " << nb_cores << G4endl;
+    // }
+    int nb_cores = 1;
 #else
     int nb_cores = 1;
 #endif
-
-    if (nb_cores == 8)
-    {
-        nb_cores = 4;
-        G4cout << "Number of cores to be used: " << nb_cores << G4endl;
-    }
-
-    if (nb_cores == 64)
-    {
-        nb_cores = 32;
-        G4cout << "Number of cores to be used: " << nb_cores << G4endl;
-    }
-
-    if (nb_cores == 12)
-    {
-        nb_cores = 4;
-        G4cout << "Number of cores to be used: " << nb_cores << G4endl;
-    }
 
     //// choose the Random engine and give seed
     G4Random::setTheEngine(new CLHEP::MixMaxRng);

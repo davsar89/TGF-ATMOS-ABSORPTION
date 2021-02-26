@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "PhysicsList.hh"
 #include "G4EmStandardPhysics_option1.hh"
+#include "G4EmStandardPhysics_option4.hh"
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -40,7 +41,7 @@ TGF_PhysicsList::TGF_PhysicsList(Settings::Settings sets_int) : G4VUserPhysicsLi
     this->settings = std::move(sets_int);
 
 //    emPhysicsList = new G4EmStandardPhysics_option4_dr(this->settings);
-    emPhysicsList = new G4EmStandardPhysics_option1();
+    emPhysicsList = new G4EmStandardPhysics_option4();
     this->DumpCutValuesTable();
 }
 

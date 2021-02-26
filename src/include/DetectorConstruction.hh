@@ -112,7 +112,6 @@ extern "C" {
 #include "G4VPhysicalVolume.hh"
 #include <geodetic_converter.hh>
 #include <G4ExtendedMaterial.hh>
-#include "FieldSetup.hh"
 #include "G4Cache.hh"
 #include "G4AutoDelete.hh"
 
@@ -135,8 +134,6 @@ private:
 
     G4Region* RECORD_REGION = new G4Region("RECORD_REGION");
 
-    G4Cache<FieldSetup*>    fEmFieldSetup;
-
     ///
 
     double base_radius;
@@ -155,9 +152,11 @@ private:
 
     void calculate_radii_list();
 
-    int find_atmosphere_part_material(double lat, double lon, double alt);
+    int find_atmosphere_part_material(const double& lat, const double& lon, const double& alt);
 
-    std::vector<G4Material *> Airs;
+    std::vector<G4Material *> Airs{};
+
+    void Calculate_Column_density(const double start_alt_km);
 
     //    void ConstructAtmosMats2();
     //    void ConstructAtmosMats3();
@@ -182,14 +181,14 @@ private:
     std::vector<G4VPhysicalVolume *> det_layers_PV;
 
     std::vector<double> radius_list; // (geodetic)altitudes intervals of the layers
-    G4int nb_altitudes = 256;
+    G4int nb_altitudes = 512;
     double radius_min = 0.1 * km; //
     double min_alt_to_build = 1.0 * km; // just inititialization value
     const int nb_theta = 45;
     const int nb_phi = 6;
 
     // because generating more than thousands of air materials uses a lot of memory
-    const int number_of_AIR_materials = 256;
+    const int number_of_AIR_materials = 768;
 
     //
     double world_max_altitude = 15000. * km;
@@ -212,6 +211,10 @@ private:
 
     G4Element *elN = new G4Element("Nitrogen", "N", 7., 14.01 * g / mole);
     G4Element *elO = new G4Element("Oxygen", "O", 8., 16.00 * g / mole);
+    G4Element *elA = new G4Element("Argon", "Ar", 18., 39.948 * g / mole);
+    G4Material *N2;
+    G4Material *O2;
+    G4Material *Ar;
 
     const double sea_level_density = 1.304E-03 * g / cm3;
     const double km_150_density = 2.190E-12 * g / cm3;

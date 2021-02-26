@@ -1,7 +1,9 @@
+* GEANT4 project to evaluate the absorption (or transmitance) of TGF photons from source to satellite altitude
 
-Project to test resulting energy spectrums after atmospheric propagation of a source TGF with energy spectrums:
-*  E^-1 * exp(-E/7.3MeV) (the one we usually use)
-*  E^-1.2 * exp(-E/7.6MeV) (Geant4)
-*  E^-1.2 * exp(-E/7.9MeV) (Dwyer)
+* Source photon energy spectrum: E^-1 * exp(-E/7.3MeV)
 
-The TGF starts at 15 km altitude with angular distribution Gaussian with sigma = 20, and is recorded at 400 km altitude.
+* upwards directed (vertical) with angular distribution Gaussian with sigma = 10 deg
+
+* The TGF starts at several altitudes, and is recorded at 500 km altitude.
+
+![plot](result_transmitance.png)

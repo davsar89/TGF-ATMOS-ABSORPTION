@@ -49,12 +49,12 @@ namespace Settings {
         // -7.0492, 55.9129 −> VAISALA
         // geodetic coordinates
 
-        double SOURCE_LAT = 0.0 ; 
-        double SOURCE_LONG = 0.0 ; 
-        double SOURCE_ALT = 15.0 ; 
-        double record_altitude = 400.0 ; 
+        double SOURCE_LAT = 26.0 ;  // deg
+        double SOURCE_LONG = -77.0 ;  // deg
+        double SOURCE_ALT = 15.0 ;  // km
+        double record_altitude = 500.0 ; // km
 
-        double SOURCE_OPENING_ANGLE = 20.0 ; 
+        double SOURCE_OPENING_ANGLE = 10.0 ; // deg
         G4String BEAMING_TYPE = "Gaussian";
 
         double TILT_ANGLE = 0.0;
@@ -70,7 +70,7 @@ namespace Settings {
         G4bool OUTPUT_TO_ASCII_FILE = true;
 
         double dr_over_R = 0.4; // stepping parameter for ionization, default is 0.2, that may be too high
-        double MIN_ENERGY_OUTPUT = 20.0 * keV;
+        double MIN_ENERGY_OUTPUT = 300.0 * keV;
 
         // date
         int dt_year = 2019;
@@ -84,7 +84,7 @@ namespace Settings {
         // Earth radius
         double earthRadius = 6378.137 * km;
 
-        double E0 = 7.3;
+        double E0 = 7.3; // MeV
         double ALPHA = 1.0;
 
     };
