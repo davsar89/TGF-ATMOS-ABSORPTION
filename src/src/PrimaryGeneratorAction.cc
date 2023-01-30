@@ -39,7 +39,7 @@ using namespace std;
 PrimaryGeneratorAction::PrimaryGeneratorAction(Settings::Settings set_in)
         : G4VUserPrimaryGeneratorAction(), fParticleGun(nullptr) {
 
-    this->settings=std::move(set_in);
+    this->settings = std::move(set_in);
 
     fParticleGun = new G4ParticleGun(nofParticles);
 
@@ -47,12 +47,31 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(Settings::Settings set_in)
     G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
     fParticleGun->SetParticleDefinition(particle);
 
+    for (int ii = 0; ii < data_RB.size() - 1; ii = ii + 2) {
+        data_RB_x.push_back(data_RB[ii]);
+        data_RB_y.push_back(data_RB[ii + 1]);
+    }
+    data_RB_x.push_back(0.0);
+
+    RB_sampler = new histogram_sampler(data_RB_x,data_RB_y);
+
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {
     delete fParticleGun;
+}
+
+double PrimaryGeneratorAction::GenerateDwyerReverseBeam(const double &emin, const double &emax) {
+
+    double candidate = 0.0;
+
+    while (candidate<emin) {
+        candidate = RB_sampler->Inverse_Cumul_sampling() * MeV;
+    }
+
+    return candidate;
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -66,12 +85,21 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent) {
     G4double MaxEner = 40. * MeV; // Max energy
     G4double MinEner = 500. * keV; // Min energy
     G4double cut_ener = settings.E0 * MeV; // exponential cut-off factor
-    G4double energy = Sample_one_RREA_gammaray_energy(MinEner, MaxEner, cut_ener, settings.ALPHA);
 
-if (settings.ALPHA<0) {
-    G4cout << "ERROR: ALPHA MUST BE POSITIVE AS THE FORMULA IS E^-ALPHA * EXP(-E/E0). ABORTING" << G4endl;
-    std::abort();
-}
+    G4double energy = 0.0;
+
+    if ( settings.SPEC_TYPE == std::string("usual")) {
+        energy = Sample_one_RREA_gammaray_energy(MinEner, MaxEner, cut_ener, settings.ALPHA);
+    } else if ( settings.SPEC_TYPE == std::string("dwyer_reverse_beam")) {
+        // Dwyer inverse beam (positron) spectrum from Bower et al. 2018 https://doi.org/10.1029/2017JD027771
+        energy = GenerateDwyerReverseBeam(MinEner, 69 * MeV);
+    }
+
+
+    if (settings.ALPHA < 0) {
+        G4cout << "ERROR: ALPHA MUST BE POSITIVE AS THE FORMULA IS E^-ALPHA * EXP(-E/E0). ABORTING" << G4endl;
+        std::abort();
+    }
 
     ////////////// POSITION / ANGLE /////////////////
     // ! : sampling theta uniformly between 0 and SOURCE_OPENING_ANGLE*degree does not sample uniformly over the area
@@ -209,8 +237,8 @@ PrimaryGeneratorAction::Sample_one_RREA_gammaray_energy(double &MinEner, double 
     //     G4double energy=MinEner*(pow(((MaxEner)/(MinEner)),G4UniformRand())); // code for sampling 1/E
     // (rejection method)
     G4double H = cut_ener;
-    G4double pMax = std::pow(MinEner,-power) * exp(-MinEner / H);
-    G4double pMin = std::pow(MaxEner,-power) * exp(-MaxEner / H);
+    G4double pMax = std::pow(MinEner, -power) * exp(-MinEner / H);
+    G4double pMin = std::pow(MaxEner, -power) * exp(-MaxEner / H);
     G4double pOfeRand = 0.0;
     G4double pRand = 1.0;
     G4double eRand;
@@ -218,7 +246,7 @@ PrimaryGeneratorAction::Sample_one_RREA_gammaray_energy(double &MinEner, double 
     while (pOfeRand < pRand) { // rejection
         pRand = pMin + (pMax - pMin) * G4UniformRand();
         eRand = MinEner + (MaxEner - MinEner) * G4UniformRand();
-        pOfeRand = std::pow(eRand,-power) * exp(-eRand / H);
+        pOfeRand = std::pow(eRand, -power) * exp(-eRand / H);
     }
 
     return eRand;

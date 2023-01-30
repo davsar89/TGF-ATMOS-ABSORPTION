@@ -674,8 +674,8 @@ std::vector<G4Material *> TGFDetectorConstruction::GENERATE_AIR_MATERIALS(double
         Air_OUT.back()->AddMaterial(O2, fractionOfMass = proporO2);
         Air_OUT.back()->AddMaterial(Ar, fractionOfMass = proporAr);
 
-        G4cout << "Air material nb " << ii << " is built for ALT = " << input.alt
-               << " km, at TGF Source LAT and LON (can be used at other ALT for different LAT/LON when the world is built)." << G4endl;
+        //G4cout << "Air material nb " << ii << " is built for ALT = " << input.alt
+        //       << " km, at TGF Source LAT and LON (can be used at other ALT for different LAT/LON when the world is built)." << G4endl;
     }
 
     if (Air_OUT.size() != density_grid.size()) {

@@ -7,6 +7,7 @@ set(0,'DefaultFigureWindowStyle','normal')
 
 MIN_ENERGY = 300; %keV
 
+! rm -rf fused.txt
 ! cat ./build/output_ascii/* > fused.txt
 
 yy=importdata('fused.txt');
@@ -47,14 +48,16 @@ transmitance(isnan(transmitance))=0;
 
 plot(ALT_LIST,transmitance)
 
+set(gca,'yscale','log')
+
 grid on
 
-title({'TGF photon transmitance (between 0 and 1)', 'as function of photon source altitude.','assuming photon spectrum 1/E*exp(-E/7.3MeV) and Gaussian beaming (sigma 10 deg)','recorded at 500 km altitude, lat = 22deg, long = -77deg','Source photon min energy = 500 keV','Record photon min energy = 300 keV','beaming upwards gaussian sigma 10 deg'})
+%title({'TGF photon transmitance (between 0 and 1)', 'as function of photon source altitude.','assuming photon spectrum 1/E*exp(-E/7.3MeV) and Gaussian beaming (sigma 10 deg)','recorded at 500 km altitude, lat = 22deg, long = -77deg','Source photon min energy = 500 keV','Record photon min energy = 300 keV','beaming upwards gaussian sigma 10 deg'})
 
 xlabel('source altitude (km)')
 ylabel('transmitance (between 0 and 1)')
 
-saveas(gcf,'result_transmitance.png')
+saveas(gcf,'result_transmitance_reverse_beam.png')
 
 % text(10,0.015,num2str(transmitance))
 %     [N,bins] = histcounts(e_kept,bins);

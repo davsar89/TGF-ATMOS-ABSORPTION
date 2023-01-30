@@ -34,6 +34,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
 #include <vector>
+#include <string>
 
 // there is a a copy of it on class that need it
 // should not be used to share values around
@@ -86,6 +87,9 @@ namespace Settings {
 
         double E0 = 7.3; // MeV
         double ALPHA = 1.0;
+
+        //std::string SPEC_TYPE = "dwyer_reverse_beam";
+        G4String SPEC_TYPE = 'usual';
 
     };
 }
