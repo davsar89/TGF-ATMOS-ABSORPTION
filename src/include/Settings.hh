@@ -89,7 +89,7 @@ namespace Settings {
         double ALPHA = 1.0;
 
         //std::string SPEC_TYPE = "dwyer_reverse_beam";
-        G4String SPEC_TYPE = 'usual';
+        G4String SPEC_TYPE = "usual";
 
     };
 }
