@@ -88,8 +88,8 @@ namespace Settings {
         double E0 = 7.3; // MeV
         double ALPHA = 1.0;
 
-        //std::string SPEC_TYPE = G4String("dwyer_reverse_beam");
-        std::string SPEC_TYPE = G4String("usual");
+        std::string SPEC_TYPE = G4String("dwyer_reverse_beam");
+        //std::string SPEC_TYPE = G4String("usual");
 
     };
 }
